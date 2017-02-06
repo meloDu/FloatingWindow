@@ -17,7 +17,6 @@ import java.lang.ref.WeakReference;
 public class SpeechReceiver extends BroadcastReceiver {
     private final String TAG = "SpeechReceiver";
     private WindowManager wm;
-    static TextView tv;
     WindowManager.LayoutParams params;
     MyHandler mHandler = new MyHandler(this);
 //    Handler mHandler=new Handler();
@@ -37,7 +36,7 @@ public class SpeechReceiver extends BroadcastReceiver {
             params.width = WindowManager.LayoutParams.WRAP_CONTENT;
             params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-            tv = new TextView(context);
+            final TextView tv = new TextView(context);
             tv.setBackgroundColor(Color.WHITE);
             tv.setTextColor(Color.BLACK);
             // 设置字体大小
@@ -45,13 +44,11 @@ public class SpeechReceiver extends BroadcastReceiver {
             tv.setText(intent.getStringExtra("content"));
             wm.addView(tv, params);
             mHandler.postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
-                    wm.removeView(tv);
+                        wm.removeView(tv);
                 }
             }, 800);
-
         }
     }
 
@@ -65,7 +62,7 @@ public class SpeechReceiver extends BroadcastReceiver {
         public void handleMessage(android.os.Message msg) {
             SpeechReceiver receiver = mReceiver.get();
             if (receiver != null) {
-                receiver.wm.removeView(tv);
+//                receiver.wm.removeView(tv);
             }
         }
     }
