@@ -3,8 +3,11 @@ package com.rmtd.melo.floatingwindow;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -15,7 +18,9 @@ public class WindownManagerHelper {
     private WindowManager mWindowManager;
 
     private TextView tv;
+    private ScrollView mScrollView;
     private StringBuilder newString = new StringBuilder();
+    private Handler handler = new Handler();
 
     private WindownManagerHelper() {
 
@@ -39,7 +44,7 @@ public class WindownManagerHelper {
 //        params.x = 0;
 //        params.y = 0;
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
-        params.height = 200;
+        params.height = 400;
 
 
         tv = new TextView(context);
@@ -47,13 +52,41 @@ public class WindownManagerHelper {
         // 设置字体大小
         tv.setTextSize(25);
         tv.setText("content");
-        mWindowManager.addView(tv, params);
+
+        mScrollView=new ScrollView(context);
+        mScrollView.setVerticalScrollBarEnabled(true);
+        mScrollView.addView(tv);
+
+
+        mWindowManager.addView(mScrollView, params);
     }
 
     public void setSoundText(String soundText) {
-//        newString.append(soundText).append("\r\n");
-        tv.setText(soundText);
+        newString.append(soundText).append("\r\n");
+        tv.setText(newString);
+        scroll2Bottom(mScrollView,tv);
     }
 
+    public void scroll2Bottom(final ScrollView scroll, final View inner) {
+
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                if (scroll == null || inner == null) {
+                    return;
+                }
+                // 内层高度超过外层
+                int offset = inner.getMeasuredHeight()
+                        - scroll.getMeasuredHeight();
+                if (offset < 0) {
+                    System.out.println("定位...");
+                    offset = 0;
+                }
+                scroll.scrollTo(0, offset);
+            }
+        });
+    }
 
 }
