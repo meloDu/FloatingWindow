@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Handler;
-import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
@@ -36,14 +36,16 @@ public class WindownManagerHelper {
 
     public void init(Context context) {
         mWindowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+        final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.format = PixelFormat.RGBA_8888;
-        params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL; // 调整悬浮窗口至左侧侧中间
-        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-//        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+//        params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL; // 调整悬浮窗口至左侧侧中间
+        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        // 设置Window flag，下面的flag如果不设置那么，不能向下传递事件
+
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 //        params.x = 0;
 //        params.y = 0;
-        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.width = 400;
         params.height = 400;
 
 
@@ -53,18 +55,48 @@ public class WindownManagerHelper {
         tv.setTextSize(25);
         tv.setText("content");
 
-        mScrollView=new ScrollView(context);
+        mScrollView = new ScrollView(context);
+        mScrollView.setBackgroundColor(Color.BLUE);
         mScrollView.setVerticalScrollBarEnabled(true);
         mScrollView.addView(tv);
 
-
         mWindowManager.addView(mScrollView, params);
+
+
+        //设置可拖动
+        mScrollView.setOnTouchListener(new View.OnTouchListener() {
+
+            int lastX, lastY;
+            int paramX, paramY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastX = (int) event.getRawX();
+                        lastY = (int) event.getRawY();
+                        paramX = params.x;
+                        paramY = params.y;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int dx = (int) event.getRawX() - lastX;
+                        int dy = (int) event.getRawY() - lastY;
+                        params.x = paramX + dx;
+                        params.y = paramY + dy;
+                        // 更新悬浮窗位置
+                        mWindowManager.updateViewLayout(mScrollView, params);
+                        break;
+                }
+                return false;
+            }
+        });
     }
+
 
     public void setSoundText(String soundText) {
         newString.append(soundText).append("\r\n");
         tv.setText(newString);
-        scroll2Bottom(mScrollView,tv);
+        scroll2Bottom(mScrollView, tv);
     }
 
     public void scroll2Bottom(final ScrollView scroll, final View inner) {
