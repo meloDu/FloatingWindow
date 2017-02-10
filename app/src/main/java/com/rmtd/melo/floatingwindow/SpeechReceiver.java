@@ -3,11 +3,9 @@ package com.rmtd.melo.floatingwindow;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
@@ -27,28 +25,34 @@ public class SpeechReceiver extends BroadcastReceiver {
         Log.i(TAG, "Broadcast:" + action);
         if (action.equals("speechcontent")) {
             Log.i(TAG, "收到语音文本并显示");
+            Log.i(TAG,intent.getStringExtra("content"));
+            WindownManagerHelper.getInsrance().setSoundText(intent.getStringExtra("content"));
 
 
-            wm = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-            params = new WindowManager.LayoutParams();
-            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-            final TextView tv = new TextView(context);
-            tv.setBackgroundColor(Color.WHITE);
-            tv.setTextColor(Color.BLACK);
-            // 设置字体大小
-            tv.setTextSize(25);
-            tv.setText(intent.getStringExtra("content"));
-            wm.addView(tv, params);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                        wm.removeView(tv);
-                }
-            }, 800);
+
+
+//
+//            wm = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+//            params = new WindowManager.LayoutParams();
+//            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+//            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+//            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+//            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//
+//            final TextView tv = new TextView(context);
+//            tv.setBackgroundColor(Color.WHITE);
+//            tv.setTextColor(Color.BLACK);
+//            // 设置字体大小
+//            tv.setTextSize(25);
+//            tv.setText(intent.getStringExtra("content"));
+//            wm.addView(tv, params);
+//            mHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                        wm.removeView(tv);
+//                }
+//            }, 800);
         }
     }
 

@@ -8,6 +8,8 @@ import com.squareup.leakcanary.LeakCanary;
  * Created by melo on 2017/2/6.
  */
 public class MyApp extends Application {
+    WindownManagerHelper mWindownManagerHelper;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -18,5 +20,8 @@ public class MyApp extends Application {
         }
         LeakCanary.install(this);
         // Normal app init code...
+        mWindownManagerHelper = WindownManagerHelper.getInsrance();
+        mWindownManagerHelper.init(getApplicationContext());
+
     }
 }
